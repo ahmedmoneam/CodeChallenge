@@ -9,3 +9,5 @@ dependencyResolutionManagement {
 rootProject.name = "Code Challenge"
 include ':app'
 include ':core'
+include ':remote'
+include ':local'
