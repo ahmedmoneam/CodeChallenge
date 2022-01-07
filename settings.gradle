@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Code Challenge"
 include ':app'
+include ':core'
