@@ -3,6 +3,7 @@ package com.ahmoneam.instabug.core.threading
 import android.os.Handler
 import android.os.Looper
 import com.ahmoneam.instabug.core.di.SL
+import com.ahmoneam.instabug.core.remotedata.Result
 import java.util.concurrent.ExecutorService
 
 object Threading {
@@ -35,8 +36,21 @@ object Threading {
         return futureTask
     }
 
+    fun <T, R> CustomFutureTask<Result<T>>.mapFromResult(call: (T) -> R): CustomFutureTask<Result<R>> {
+        val futureTask = CustomFutureTask {
+            when (val result = this.get()) {
+                is Result.Success -> Result.Success(call(result.value))
+                is Result.Failure -> Result.Failure(result.reason)
+            }
+        }
+        executorService.execute(futureTask)
+        return futureTask
+    }
+
     fun <T> CustomFutureTask<T>.onCompleteOnMain(call: (T?, Throwable?) -> Unit): CustomFutureTask<T> {
-        Handler(Looper.getMainLooper()).post { onFinish(call = call) }
+        onFinish { result, throwable ->
+            Handler(Looper.getMainLooper()).post { call(result, throwable) }
+        }
         return this
     }
 }

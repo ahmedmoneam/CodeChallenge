@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CodeChallenge">
         <activity
-            android:name=".MainActivity"
+            android:name=".modules.words.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
