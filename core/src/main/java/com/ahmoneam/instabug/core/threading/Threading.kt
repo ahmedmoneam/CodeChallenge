@@ -1,10 +1,12 @@
 package com.ahmoneam.instabug.core.threading
 
+import android.os.Handler
+import android.os.Looper
+import com.ahmoneam.instabug.core.di.SL
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 object Threading {
-    private val executorService: ExecutorService = Executors.newFixedThreadPool(4)
+    private val executorService: ExecutorService get() = SL[ExecutorService::class.java]
 
     fun <T> execute(call: () -> T): CustomFutureTask<T> {
         val futureTask = CustomFutureTask { call() }
@@ -26,5 +28,15 @@ object Threading {
             }
         }
     }
-}
 
+    fun <T, R> CustomFutureTask<T>.map(call: (T) -> R): CustomFutureTask<R> {
+        val futureTask = CustomFutureTask { call(this.get()) }
+        executorService.execute(futureTask)
+        return futureTask
+    }
+
+    fun <T> CustomFutureTask<T>.onCompleteOnMain(call: (T?, Throwable?) -> Unit): CustomFutureTask<T> {
+        Handler(Looper.getMainLooper()).post { onFinish(call = call) }
+        return this
+    }
+}

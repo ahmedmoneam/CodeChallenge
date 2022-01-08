@@ -16,6 +16,7 @@ object SL {
 
     fun init(context: Context) {
         mContext = WeakReference(context.applicationContext)
+        sServicesInstances[Context::class.java.name] = context.applicationContext
     }
 
     /**
@@ -38,6 +39,15 @@ object SL {
         }
     }
 
+    fun bindInstance(interfaceClass: Class<*>, any: Any) {
+        synchronized(sServicesInstancesLock) {
+            sServicesInstances.put(
+                interfaceClass.name,
+                any
+            )
+        }
+    }
+
     private fun getService(name: String): Any {
         synchronized(sServicesInstancesLock) {
             val o = sServicesInstances[name]
@@ -48,13 +58,12 @@ object SL {
                 } else Class.forName(name)
 
                 serviceInstance = try {
-                    val e1 = clazz.getConstructor(Context::class.java)
-                    e1.newInstance(mContext.get()!!)
-                } catch (var6: NoSuchMethodException) {
                     val constructor = clazz.constructors.first()
                     val params = constructor.parameterTypes
                     if (params.isEmpty()) constructor.newInstance()
                     else constructor.newInstance(*params.map { getService(it.name) }.toTypedArray())
+                } catch (e: NoSuchMethodException) {
+                    throw e
                 }
                 sServicesInstances[name] = serviceInstance
                 serviceInstance

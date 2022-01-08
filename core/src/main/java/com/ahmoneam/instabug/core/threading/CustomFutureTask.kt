@@ -1,30 +1,27 @@
 package com.ahmoneam.instabug.core.threading
 
-import android.os.Handler
-import android.os.Looper
 import java.util.concurrent.Callable
 import java.util.concurrent.CancellationException
 import java.util.concurrent.FutureTask
 
 class CustomFutureTask<T : Any?>(callable: Callable<T>) : FutureTask<T>(callable) {
-    private var onFinishCallback: ((Result<T?>) -> Unit)? = null
-    private var onMain = false
+    private var onFinishCallback: ((T?, Throwable?) -> Unit)? = null
 
-    fun onFinish(onMain: Boolean = false, call: (Result<T?>) -> Unit): CustomFutureTask<T> {
-        this.onMain = onMain
+    fun onFinish(call: (T?, Throwable?) -> Unit): CustomFutureTask<T> {
         onFinishCallback = call
         return this
     }
 
     override fun done() {
         super.done()
-        val result: Result<T> = try {
-            if (isCancelled) Result.failure(CancellationException())
-            else Result.success(get())
+        var data: T? = null
+        var error: Throwable? = null
+        try {
+            if (isCancelled) error = CancellationException()
+            else data = get()
         } catch (t: Throwable) {
-            Result.failure(t)
+            error = t
         }
-        if (onMain) Handler(Looper.getMainLooper()).post { onFinishCallback?.invoke(result) }
-        else onFinishCallback?.invoke(result)
+        onFinishCallback?.invoke(data, error)
     }
 }
