@@ -34,7 +34,7 @@ class HtmlParser : IHtmlParser {
         return parseBodyToText(html)?.let { s ->
             s.splitToSequence(spacesRegex)
                 .filterNot { it.contains(">") || it.contains("<") }
-                .map { it.replace(onlyTextRegex, "") }
+                .map { it.replace(onlyTextRegex, "").uppercase() }
                 .filterNot { it.isEmpty() }
         } ?: emptySequence()
     }
