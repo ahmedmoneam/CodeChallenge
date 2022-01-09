@@ -20,6 +20,7 @@ class RemoteDataSourceTest {
 
     @Before
     fun setUp() {
+        CoreDI.initIdlingResource()
         CoreDI.init(Executors.newFixedThreadPool(1))
         RemoteDI.init(mockk(), spyk<RemoteDataSource>(), mockk())
         remoteDataSource = SL[IRemoteDataSource::class.java]
