@@ -11,7 +11,7 @@ import com.ahmoneam.instabug.core.threading.Threading.onCompleteOnMain
 
 class WordsListViewModel {
     private val getWordsUseCase by lazy { SL[GetWordsUseCase::class.java] }
-    private var onStatusUpdatedListener: ((UiStatus<List<WordItemView>>) -> Unit)? = null
+    private var onStatusUpdatedListener = mutableListOf<((UiStatus<List<WordItemView>>) -> Unit)?>()
     private var currentStatus: UiStatus<List<WordItemView>> = UiStatus.Idle
     private val cachedList = mutableListOf<WordItemView>()
 
@@ -21,11 +21,11 @@ class WordsListViewModel {
 
     private fun updateStatus(status: UiStatus<List<WordItemView>>) {
         currentStatus = status
-        onStatusUpdatedListener?.invoke(status)
+        onStatusUpdatedListener.onEach { it?.invoke(status) }
     }
 
     fun addOnStatusUpdatedListener(listener: ((UiStatus<List<WordItemView>>) -> Unit)? = null) {
-        onStatusUpdatedListener = listener
+        onStatusUpdatedListener.add(listener)
         updateStatus(currentStatus)
     }
 
@@ -59,6 +59,6 @@ class WordsListViewModel {
     }
 
     fun destroy() {
-        // todo
+        onStatusUpdatedListener.clear()
     }
 }

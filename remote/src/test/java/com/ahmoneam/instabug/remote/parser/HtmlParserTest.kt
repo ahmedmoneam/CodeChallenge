@@ -105,17 +105,17 @@ class HtmlParserTest {
     @Test
     fun parseBodyToOnlyWords() {
         val result = htmlParser.parseBodyToOnlyWords(testData).toList()
-        assertThat(result, hasItems("test", "for", "the", "parser"))
+        assertThat(result, hasItems("TEST", "FOR", "THE", "PARSER"))
         assertThat(result.size, equalTo(27))
     }
 
     @Test
     fun parseBodyToWordsWithCount() {
         val result = htmlParser.parseBodyToWordsWithCount(testData)
-        assertThat(result["test"], equalTo(2))
-        assertThat(result["parser"], equalTo(2))
-        assertThat(result["good"], equalTo(3))
-        assertThat(result["data"], equalTo(1))
+        assertThat(result["TEST"], equalTo(2))
+        assertThat(result["PARSER"], equalTo(2))
+        assertThat(result["GOOD"], equalTo(3))
+        assertThat(result["DATA"], equalTo(1))
     }
 
 
