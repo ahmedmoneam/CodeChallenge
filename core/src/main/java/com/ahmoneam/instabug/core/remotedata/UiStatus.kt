@@ -9,4 +9,3 @@ sealed class UiStatus<out T> {
     data class Success<out T>(val data: T) : UiStatus<T>()
     data class Failure(val type: ErrorType, val errorMessage: String? = null) : UiStatus<Nothing>()
 }
-
