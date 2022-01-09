@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Code Challenge</string>
+    <string name="message_no_data_found">No data found</string>
+    <string name="message_no_internet_connection">No Internet Connection</string>
+    <string name="action_retry">retry</string>
+    <string name="message_unknown_error">Error has occurred</string>
 </resources>
