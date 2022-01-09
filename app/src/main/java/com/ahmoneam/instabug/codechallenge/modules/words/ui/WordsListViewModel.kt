@@ -1,7 +1,7 @@
 package com.ahmoneam.instabug.codechallenge.modules.words.ui
 
-import android.util.Log
-import com.ahmoneam.instabug.codechallenge.modules.words.domain.Word
+import com.ahmoneam.instabug.codechallenge.modules.words.entities.view.WordItemView
+import com.ahmoneam.instabug.codechallenge.modules.words.mapToWordItemView
 import com.ahmoneam.instabug.codechallenge.modules.words.usecases.GetWordsUseCase
 import com.ahmoneam.instabug.core.di.SL
 import com.ahmoneam.instabug.core.error.ErrorType
@@ -11,20 +11,20 @@ import com.ahmoneam.instabug.core.threading.Threading.onCompleteOnMain
 
 class WordsListViewModel {
     private val getWordsUseCase by lazy { SL[GetWordsUseCase::class.java] }
-    private var onStatusUpdatedListener: ((UiStatus<List<Word>>) -> Unit)? = null
-    private var currentStatus: UiStatus<List<Word>> = UiStatus.Idle
-    private val cachedList = mutableListOf<Word>()
+    private var onStatusUpdatedListener: ((UiStatus<List<WordItemView>>) -> Unit)? = null
+    private var currentStatus: UiStatus<List<WordItemView>> = UiStatus.Idle
+    private val cachedList = mutableListOf<WordItemView>()
 
     init {
         getWords()
     }
 
-    private fun updateStatus(status: UiStatus<List<Word>>) {
+    private fun updateStatus(status: UiStatus<List<WordItemView>>) {
         currentStatus = status
         onStatusUpdatedListener?.invoke(status)
     }
 
-    fun addOnStatusUpdatedListener(listener: ((UiStatus<List<Word>>) -> Unit)? = null) {
+    fun addOnStatusUpdatedListener(listener: ((UiStatus<List<WordItemView>>) -> Unit)? = null) {
         onStatusUpdatedListener = listener
         updateStatus(currentStatus)
     }
@@ -39,9 +39,9 @@ class WordsListViewModel {
                             val list = it.value
                             if (list.isNullOrEmpty()) updateStatus(UiStatus.Empty)
                             else {
-                                updateStatus(UiStatus.Success(list))
+                                updateStatus(UiStatus.Success(list.mapToWordItemView()))
                                 cachedList.clear()
-                                cachedList.addAll(list)
+                                cachedList.addAll(list.mapToWordItemView())
                             }
                         }
                         is Result.Failure -> updateStatus(UiStatus.Failure(it.type))
@@ -59,7 +59,6 @@ class WordsListViewModel {
     }
 
     fun destroy() {
-        Log.v("MainActivity", "Destroy")
         // todo
     }
 }

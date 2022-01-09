@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.ahmoneam.instabug.codechallenge.R
-import com.ahmoneam.instabug.codechallenge.modules.words.domain.Word
+import com.ahmoneam.instabug.codechallenge.modules.words.entities.view.WordItemView
 
-class WordsAdapter(context: Context, objects: MutableList<Word>) :
-    ArrayAdapter<Word>(context, 0, objects) {
+class WordsAdapter(context: Context, objects: MutableList<WordItemView>) :
+    ArrayAdapter<WordItemView>(context, 0, objects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return (convertView
@@ -19,7 +19,7 @@ class WordsAdapter(context: Context, objects: MutableList<Word>) :
             .apply { bind(this, getItem(position)) }
     }
 
-    private fun bind(view: View, word: Word?) {
+    private fun bind(view: View, word: WordItemView?) {
         word?.let {
             view.findViewById<TextView>(R.id.wordTextView)?.text = it.text
             view.findViewById<TextView>(R.id.wordCountTextView)?.text = it.count.toString()

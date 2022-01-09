@@ -2,7 +2,6 @@ package com.ahmoneam.instabug.core.error
 
 sealed class ErrorType {
     object Unknown : ErrorType()
-    object Cancellation : ErrorType()
 }
 
 sealed class NetworkErrorType(val code: Int) : ErrorType() {

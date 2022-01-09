@@ -36,14 +36,4 @@ class ConnectivityUtils : IConnectivityUtils {
             }
             return result
         }
-
-    companion object {
-        @JvmStatic
-        inline fun checkForConnectivity(isNotConnected: (() -> Unit), isConnected: (() -> Unit)) {
-            when {
-                SL[IConnectivityUtils::class.java].isNetworkConnected -> isConnected()
-                else -> isNotConnected()
-            }
-        }
-    }
 }

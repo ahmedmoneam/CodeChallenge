@@ -23,11 +23,11 @@ object RemoteDI {
         initHtmlParser(htmlParser)
     }
 
-    fun initConnectivityUtils(connectivityUtils: IConnectivityUtils) {
+    private fun initConnectivityUtils(connectivityUtils: IConnectivityUtils) {
         SL.bindInstance(IConnectivityUtils::class.java, connectivityUtils)
     }
 
-    fun initRemoteDataSource(remoteDataSource: IRemoteDataSource) {
+    private fun initRemoteDataSource(remoteDataSource: IRemoteDataSource) {
         SL.bindInstance(IRemoteDataSource::class.java, remoteDataSource)
     }
 
