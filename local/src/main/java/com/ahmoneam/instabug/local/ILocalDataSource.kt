@@ -1,3 +1,7 @@
 package com.ahmoneam.instabug.local
 
-interface ILocalDataSource
+import com.ahmoneam.instabug.local.module.word.cache.IWordCacheManager
+
+interface ILocalDataSource {
+    val wordCacheManager: IWordCacheManager
+}

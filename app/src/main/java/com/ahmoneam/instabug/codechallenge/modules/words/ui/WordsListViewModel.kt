@@ -16,15 +16,33 @@ class WordsListViewModel {
     private val cachedList = mutableListOf<Word>()
 
     init {
+        getWords()
+    }
+
+    private fun updateStatus(status: UiStatus<List<Word>>) {
+        currentStatus = status
+        onStatusUpdatedListener?.invoke(status)
+    }
+
+    fun addOnStatusUpdatedListener(listener: ((UiStatus<List<Word>>) -> Unit)? = null) {
+        onStatusUpdatedListener = listener
+        updateStatus(currentStatus)
+    }
+
+    fun getWords() {
         updateStatus(UiStatus.Loading)
         getWordsUseCase()
             .onCompleteOnMain { result, throwable ->
                 result?.let {
                     when (it) {
                         is Result.Success -> {
-                            updateStatus(UiStatus.Success(it.value))
-                            cachedList.clear()
-                            cachedList.addAll(it.value)
+                            val list = it.value
+                            if (list.isNullOrEmpty()) updateStatus(UiStatus.Empty)
+                            else {
+                                updateStatus(UiStatus.Success(list))
+                                cachedList.clear()
+                                cachedList.addAll(list)
+                            }
                         }
                         is Result.Failure -> updateStatus(UiStatus.Failure(it.type))
                     }
@@ -35,25 +53,13 @@ class WordsListViewModel {
             }
     }
 
-    fun addOnStatusUpdatedListener(listener: ((UiStatus<List<Word>>) -> Unit)? = null) {
-        onStatusUpdatedListener = listener
-        updateStatus(currentStatus)
+    fun onRestoreState() {
+        updateStatus(UiStatus.Success(cachedList))
+        updateStatus(UiStatus.Idle)
     }
 
     fun destroy() {
         Log.v("MainActivity", "Destroy")
         // todo
     }
-
-    private fun updateStatus(status: UiStatus<List<Word>>) {
-        currentStatus = status
-        onStatusUpdatedListener?.invoke(status)
-    }
-
-    fun onRestoreState() {
-        updateStatus(UiStatus.Success(cachedList))
-        updateStatus(UiStatus.Idle)
-    }
 }
-
-
